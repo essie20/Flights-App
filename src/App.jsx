@@ -17,11 +17,12 @@ function App() {
   return (
     <div className="App">
       <h1>Flight Status</h1>
-      <div class="grid">
+      <div className="grid grid-cols-3">
         
         <div>
           <label>From</label>
-          <input 
+          <input
+            className="border-solid border-2 border-indigo-500 rounded" 
             type="text"
             value={origin}
             onChange={(e) => setOrigin(e.target.value)} 
@@ -29,7 +30,8 @@ function App() {
         </div>
         <div>
           <label>To</label>
-          <input 
+          <input
+            className="border-solid border-2 border-indigo-500 rounded" 
             type="text"
             value={destination}
             onChange={(e) => setDestination(e.target.value)} 
@@ -37,14 +39,16 @@ function App() {
         </div>
         <div>
           <label>Passengers</label>
-          <input 
+          <input
+            className="border-solid border-2 border-indigo-500 rounded" 
             type="number" 
             value={passengers}
             onChange={(e) => setPassengers(e.target.value)}/>
         </div>
       </div>
       <label>Departure Date</label>
-      <input 
+      <input
+        className="border-solid border-2 border-indigo-500 rounded" 
         type="date" 
         value={departureDate}
         onChange={(e) => setDepartureDate(e.target.value)}/>
