@@ -1,20 +1,20 @@
 import { useState } from 'react'
 import { useQueryClient } from 'react-query'
+import { getDepartures } from './api/flight';
+import { format, addDays } from 'date-fns'
 
 function App() {
   const queryClient = useQueryClient()
   const [passengers, setPassengers] = useState(1);
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
-  const [departureDate, setDepartureDate] = useState(new Date);
+  const minmumDate = format(addDays(new Date(), 8), 'yyyy-MM-dd')
+  const [departureDate, setDepartureDate] = useState(minmumDate);
 
 
   function performSearch() {
-    console.log(passengers)
-    console.log(origin)
-    console.log(destination)
-    console.log(departureDate)
-    // TODO send API Call using react query
+    const formattedDepartureDate = format(new Date(departureDate), 'yyyy-MM-dd')
+    getDepartures(origin, destination, formattedDepartureDate, passengers)
   }
 
   return (
@@ -48,6 +48,7 @@ function App() {
               className="w-full outline-0 px-5 pb-2 text-xl"
               type="date" 
               value={departureDate}
+              min={minmumDate}
               onChange={(e) => setDepartureDate(e.target.value)}/>
           </label>
         </div>
