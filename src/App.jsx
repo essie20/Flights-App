@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQueryClient, useQuery } from 'react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { getDepartures } from './api/flight';
 import { format, addDays } from 'date-fns'
 import Input from './components/Input';
@@ -12,77 +12,73 @@ function App() {
   const minmumDate = format(addDays(new Date(), 8), 'yyyy-MM-dd')
   const [departureDate, setDepartureDate] = useState(minmumDate);
 
-  const { loading, error, data } = useQuery("getDepartures", getDepartures);
-
-
-  function performSearch() {
+  const { loading, error, data, refetch } = useQuery(["getDepartures"], () => {
     const formattedDepartureDate = format(new Date(departureDate), 'yyyy-MM-dd')
-    getDepartures(origin, destination, formattedDepartureDate, passengers)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    return (
-      <div>
-        {data}
-      </div>
-    );
-  }
+    return getDepartures(origin, destination, formattedDepartureDate, passengers) 
+  }, {
+    enabled: false
+  });
 
   return (
     <div className="App">
       <h1 className="text-3xl font-bold mb-5">Flight Status</h1>
       <div className="flex flex-row gap-4 mb-4 bg-blue-900 p-5 rounded-2xl">
-        <div className="border-solid border border-blue-300 rounded bg-white basis-1/4">
-          <label>
-            <span className="mr-2 block pt-3 pl-5 text-gray-500">From</span>
-            <Input
-              className="w-full outline-0 px-5 pb-2 text-xl"
-              type="text"
-              initialValue={origin}
-              onChange={setOrigin}
-            />
-          </label>
-        </div>
-        <div className="border-solid border border-blue-300 rounded bg-white basis-1/4">
-          <label>
-            <span className="mr-2 block pt-3 pl-5 text-gray-500">To</span>
-            <Input
-              className="w-full outline-0 px-5 pb-2 text-xl"
-              type="text"
-              initialValue={destination}
-              onChange={setDestination}
-            />
-          </label>
-        </div>
-        <div className="border-solid border border-blue-300 rounded bg-white basis-1/4">
-          <label>
-            <span className="mr-2 block pt-3 pl-5 text-gray-500">Departure Date</span>
-            <Input
-              className="w-full outline-0 px-5 pb-2 text-xl"
-              type="date"
-              initialValue={departureDate}
-              onChange={setDepartureDate} 
-              min={minmumDate} //if type is date how to send min props??
-            />
-          </label>
-        </div>
-        <div className="border-solid border border-blue-300 rounded bg-white basis-1/6">
-          <label>
-            <span className="mr-2 block pt-3 pl-5 text-gray-500">Passengers</span>
-            <Input
-              className="w-full outline-0 px-5 pb-2 text-xl"
-              type="number"
-              initialValue={passengers} 
-              onChange={setPassengers}
-            />
-          </label>
-        </div>
+          <Input
+            className="basis-1/4"
+            label="From"
+            type="text"
+            value={origin}
+            onChange={setOrigin}
+          />
+          <Input
+            className="basis-1/4"
+            label="To"
+            type="text"
+            value={destination}
+            onChange={setDestination}
+          />
+          <Input
+            className="basis-1/4"
+            label="Departure Date"
+            type="date"
+            value={departureDate}
+            onChange={setDepartureDate} 
+            min={minmumDate}
+          />
+          <Input
+            className="basis-1/6"
+            label="Passengers"
+            type="number"
+            value={passengers} 
+            onChange={setPassengers}
+          />
         <button 
           className="border-solid border text-white border-green-700 bg-green-500 rounded-full px-4 py-2 ml-2 mt-2 font-semibold w-32 h-14" 
-          onClick={() => performSearch()}>
+          onClick={() => refetch()}>
           Search
         </button>
       </div>
+      {data ?
+        (<div>
+          <div>
+            Category: {data[0].name}
+          </div>
+          <div>
+            Price: {data[0].items[0].price.formatted}
+          </div>
+          <div>
+            <a 
+              className="bg-blue-500 rounded p-1" 
+              href={data[0].items[0].deeplink} 
+              target="_blank" 
+              rel="noopener noreferrer">
+              Find flight on SkyScanner
+            </a>
+          </div>
+        </div>) : 
+      "no data"
+      }
+      
     </div>
   )
 }
