@@ -7,8 +7,8 @@ const instance = axios.create({
   timeout: 5000
 });
 
-export function getDepartures(origin, destination, departureDate, passengers) {
-  return instance.get('/search-best-flights', {
+export async function getDepartures(origin, destination, departureDate, passengers) {
+  const res = await instance.get('/search-best-flights', {
       params: {
         access_key: access_key,
         adults: passengers,
@@ -17,11 +17,13 @@ export function getDepartures(origin, destination, departureDate, passengers) {
         departureDate: departureDate
       }
     })
+  return res
+
     .then(function (response) {
       console.log(response);
       console.log(response.data);
     })
     .catch(function (error) {
       console.log(error);
-    })
+    })  
 }

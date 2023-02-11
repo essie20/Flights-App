@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient, useQuery } from 'react-query'
 import { getDepartures } from './api/flight';
 import { format, addDays } from 'date-fns'
+import Input from './components/Input';
 
 function App() {
   const queryClient = useQueryClient()
@@ -11,10 +12,20 @@ function App() {
   const minmumDate = format(addDays(new Date(), 8), 'yyyy-MM-dd')
   const [departureDate, setDepartureDate] = useState(minmumDate);
 
+  const { loading, error, data } = useQuery("getDepartures", getDepartures);
+
 
   function performSearch() {
     const formattedDepartureDate = format(new Date(departureDate), 'yyyy-MM-dd')
     getDepartures(origin, destination, formattedDepartureDate, passengers)
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+
+    return (
+      <div>
+        {data}
+      </div>
+    );
   }
 
   return (
@@ -24,42 +35,46 @@ function App() {
         <div className="border-solid border border-blue-300 rounded bg-white basis-1/4">
           <label>
             <span className="mr-2 block pt-3 pl-5 text-gray-500">From</span>
-            <input
+            <Input
               className="w-full outline-0 px-5 pb-2 text-xl"
               type="text"
-              value={origin}
-              onChange={(e) => setOrigin(e.target.value)}/>
+              initialValue={origin}
+              onChange={setOrigin}
+            />
           </label>
         </div>
         <div className="border-solid border border-blue-300 rounded bg-white basis-1/4">
           <label>
             <span className="mr-2 block pt-3 pl-5 text-gray-500">To</span>
-            <input
+            <Input
               className="w-full outline-0 px-5 pb-2 text-xl"
               type="text"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}/>
+              initialValue={destination}
+              onChange={setDestination}
+            />
           </label>
         </div>
         <div className="border-solid border border-blue-300 rounded bg-white basis-1/4">
           <label>
             <span className="mr-2 block pt-3 pl-5 text-gray-500">Departure Date</span>
-            <input
+            <Input
               className="w-full outline-0 px-5 pb-2 text-xl"
-              type="date" 
-              value={departureDate}
-              min={minmumDate}
-              onChange={(e) => setDepartureDate(e.target.value)}/>
+              type="date"
+              initialValue={departureDate}
+              onChange={setDepartureDate} 
+              min={minmumDate} //if type is date how to send min props??
+            />
           </label>
         </div>
         <div className="border-solid border border-blue-300 rounded bg-white basis-1/6">
           <label>
             <span className="mr-2 block pt-3 pl-5 text-gray-500">Passengers</span>
-            <input
+            <Input
               className="w-full outline-0 px-5 pb-2 text-xl"
-              type="number" 
-              value={passengers}
-              onChange={(e) => setPassengers(e.target.value)}/>
+              type="number"
+              initialValue={passengers} 
+              onChange={setPassengers}
+            />
           </label>
         </div>
         <button 
