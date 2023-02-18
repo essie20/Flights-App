@@ -3,6 +3,7 @@ import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { getDepartures } from './api/flight';
 import { format, addDays } from 'date-fns'
 import Input from './components/Input';
+import FlightList from './components/FlightList';
 
 function App() {
   const queryClient = useQueryClient()
@@ -58,27 +59,7 @@ function App() {
           Search
         </button>
       </div>
-      {data ?
-        (<div>
-          <div>
-            Category: {data[0].name}
-          </div>
-          <div>
-            Price: {data[0].items[0].price.formatted}
-          </div>
-          <div>
-            <a 
-              className="bg-blue-500 rounded p-1" 
-              href={data[0].items[0].deeplink} 
-              target="_blank" 
-              rel="noopener noreferrer">
-              Find flight on SkyScanner
-            </a>
-          </div>
-        </div>) : 
-      "no data"
-      }
-      
+      {data ? <FlightList data={data}/> : "no data"}
     </div>
   )
 }
