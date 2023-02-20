@@ -59,7 +59,7 @@ function App() {
           Search
         </button>
       </div>
-      {data ? <FlightList data={data}/> : "no data"}
+      {data ? <FlightList data={data} /> : "no data"}
     </div>
   )
 }
